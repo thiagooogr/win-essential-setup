@@ -13,7 +13,7 @@ Automação de instalação de softwares essenciais e Microsoft Office em ambien
 
 Este projeto automatiza o provisionamento inicial de máquinas Windows utilizando **PowerShell**, **Winget** (Windows Package Manager) e a **Office Deployment Tool (ODT)**.
 
-Com apenas um comando, é possível instalar aplicativos essenciais e o Microsoft Office de forma silenciosa, rápida e padronizada — ideal para formatações, setups novos ou ambientes corporativos.
+Com apenas um comando, o script instala aplicativos essenciais e o Microsoft Office de forma silenciosa, rápida e padronizada — ideal para formatações, setups novos ou ambientes corporativos.
 
 ---
 
@@ -21,7 +21,7 @@ Com apenas um comando, é possível instalar aplicativos essenciais e o Microsof
 
 * Instalação automática de aplicativos essenciais via Winget
 * Instalação silenciosa do Microsoft Office 2024
-* Download automático da Office Deployment Tool (ODT)
+* Download dinâmico da Office Deployment Tool (ODT) direto da Microsoft
 * Execução com verificação de privilégios administrativos
 * Processo totalmente automatizado (sem interação do usuário)
 * Fácil personalização de aplicativos e pacote Office
@@ -32,8 +32,8 @@ Com apenas um comando, é possível instalar aplicativos essenciais e o Microsof
 
 ```bash
 .
-├── install.ps1          # Script principal de automação
-├── configuration.xml    # Configuração da instalação do Office
+├── install.ps1
+├── configuration.xml
 ```
 
 ---
@@ -41,122 +41,186 @@ Com apenas um comando, é possível instalar aplicativos essenciais e o Microsof
 ## ⚙️ Requisitos
 
 * Windows 10 ou Windows 11
-* Winget instalado (já incluso em versões recentes do Windows)
+* Winget instalado
 * PowerShell 5.1 ou superior
 * Execução como Administrador
-* Conexão com a internet (para download dos pacotes e ODT)
+* Conexão com a internet
 
 ---
 
 ## 🚀 Como Executar
 
-1. Clone o repositório:
-
 ```bash
-git clone https://github.com/SEU-USUARIO/win-essential-setup.git
+git clone https://github.com/thiagooogr/win-essential-setup.git
 cd win-essential-setup
 ```
-
-2. Execute o script no PowerShell como Administrador:
 
 ```powershell
 .\install.ps1
 ```
 
-> ⚠️ O script irá baixar automaticamente a Office Deployment Tool (ODT) durante a execução.
+---
+
+## ⚠️ Possíveis Problemas e Soluções
+
+### 🔒 Execution Policy
+
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+---
+
+### 🔓 Arquivo bloqueado
+
+```powershell
+Unblock-File .\install.ps1
+```
 
 ---
 
 ## 🛠️ Personalização
 
-### ➕ Adicionar novos aplicativos
-
-1. Descubra o ID do aplicativo:
+### ➕ Adicionar aplicativos
 
 ```bash
 winget search "nome do app"
 ```
 
-2. Adicione no array `$apps` dentro do `install.ps1`:
+Exemplo:
+
+```bash
+winget search discord
+```
+
+Resultado:
+
+```
+Discord     Discord.Discord
+```
+
+Adicionar no script:
 
 ```powershell
 $apps = @(
     "Google.Chrome",
     "RARLab.WinRAR",
-    "Microsoft.VisualStudioCode"
+    "Adobe.Acrobat.Reader.64-bit",
+    "Discord.Discord"
 )
 ```
 
 ---
 
-### 🧩 Customizar instalação do Office
+## 🧩 Customizar instalação do Office
 
-Edite o arquivo `configuration.xml`.
-
-Exemplo:
-
-* Para instalar o Outlook:
-
-  * Remova: `<ExcludeApp ID="Outlook" />`
-
-* Para instalar o Teams:
-
-  * Remova: `<ExcludeApp ID="Teams" />`
-
-📌 Canal atual:
+Arquivo:
 
 ```
-PerpetualVL2024
+configuration.xml
 ```
 
-Ideal para ambientes corporativos e estabilidade de longo prazo.
+---
+
+### 📌 Estrutura base
+
+```xml
+<Configuration>
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2024">
+    <Product ID="ProPlus2024Volume">
+      <Language ID="pt-br" />
+      <ExcludeApp ID="Teams" />
+      <ExcludeApp ID="Outlook" />
+    </Product>
+  </Add>
+</Configuration>
+```
+
+---
+
+### ➕ Incluir aplicativos
+
+Remova a linha:
+
+```xml
+<ExcludeApp ID="Outlook" />
+```
+
+---
+
+### ➖ Excluir aplicativos
+
+```xml
+<ExcludeApp ID="Access" />
+<ExcludeApp ID="Publisher" />
+```
+
+---
+
+### 🌐 Alterar idioma
+
+```xml
+<Language ID="en-us" />
+```
+
+**Exemplos:**
+
+* `pt-br` → Português (Brasil)
+* `en-us` → Inglês
+* `es-es` → Espanhol
+
+---
+
+### 🏢 Alterar edição do Office
+
+```xml
+<Product ID="ProPlus2024Volume">
+```
+
+**Outras opções comuns:**
+
+* `ProPlus2021Volume`
+* `O365ProPlusRetail`
+
+---
+
+### 📡 Canal de instalação
+
+```xml
+Channel="PerpetualVL2024"
+```
+
+**Opções:**
+
+* `PerpetualVL2024` → Licença de volume (estável)
+* `Current` → Sempre atualizado
+* `MonthlyEnterprise` → Atualizações controladas
+
+---
+
+💡 **Boas práticas:**
+
+* Use canais estáveis em ambientes corporativos
+* Instale apenas os aplicativos necessários
+* Valide o XML antes de executar
 
 ---
 
 ## 🔍 Detalhes Técnicos
 
-* Verificação de privilégios administrativos antes da execução
+* Verificação de privilégios administrativos
 * Instalação silenciosa via Winget
-* Execução sequencial para evitar conflitos
-* Download automático do ODT diretamente da Microsoft
-* Extração automática do `setup.exe` durante a execução
-
----
-
-## 📸 Exemplo de Execução
-
-```bash
---- Iniciando instalacao de programas basicos ---
-Instalando: Google.Chrome...
-Instalando: RARLab.WinRAR...
-Instalando: Adobe.Acrobat.Reader.64-bit...
-Baixando Office Deployment Tool...
-Extraindo arquivos do ODT...
-Iniciando instalacao do Office 2024...
---- Processo concluido com sucesso! ---
-```
+* Download dinâmico do ODT
+* Execução sequencial
 
 ---
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT.
-Sinta-se livre para usar, modificar e distribuir.
+MIT
 
 ---
 
-## 🤝 Contribuição
+## ⭐
 
-Contribuições são bem-vindas!
-
-Se quiser melhorar o projeto:
-
-* Abra uma issue
-* Envie um pull request
-* Sugira novas funcionalidades
-
----
-
-## ⭐ Considerações
-
-Se este projeto te ajudou, considere dar uma estrela ⭐ no repositório!
+Se este projeto te ajudou, considere dar uma estrela ⭐

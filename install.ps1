@@ -17,21 +17,33 @@ $apps = @(
 
 foreach ($app in $apps) {
     Write-Host "Instalando: $app..." -ForegroundColor Yellow
-    winget install --id $app --silent --accept-package-agreements --accept-source-agreements
+    winget install --id $app --source winget --silent --accept-package-agreements --accept-source-agreements
 }
 
-# 3. Baixar e preparar Office Deployment Tool (ODT)
-$odtUrl = "https://download.microsoft.com/download/1/7/5/175F7BBA-6C7A-4E2E-BE58-7B8D9B7D6F66/officedeploymenttool.exe"
+# Baixar Office Deployment Tool (ODT) da página oficial
+$odtPage = "https://www.microsoft.com/en-us/download/details.aspx?id=49117"
 $odtFile = "odt.exe"
 
-if (!(Test-Path ".\setup.exe")) {
+Write-Host "Obtendo link mais recente do ODT..." -ForegroundColor Yellow
+
+$response = Invoke-WebRequest -Uri $odtPage
+
+# Extrai link real do download
+$downloadLink = ($response.Links | Where-Object { $_.href -like "*.exe" } | Select-Object -First 1).href
+
+if ($downloadLink) {
     Write-Host "Baixando Office Deployment Tool..." -ForegroundColor Yellow
-    Invoke-WebRequest -Uri $odtUrl -OutFile $odtFile
+    Invoke-WebRequest -Uri $downloadLink -OutFile $odtFile
 
-    Write-Host "Extraindo arquivos do ODT..." -ForegroundColor Yellow
-    Start-Process ".\$odtFile" -ArgumentList "/quiet /extract:." -Wait
-
-    Remove-Item $odtFile
+    if (Test-Path $odtFile) {
+        Write-Host "Extraindo arquivos do ODT..." -ForegroundColor Yellow
+        Start-Process ".\$odtFile" -ArgumentList "/quiet /extract:." -Wait
+        Remove-Item $odtFile
+    } else {
+        Write-Host "Falha ao baixar ODT." -ForegroundColor Red
+    }
+} else {
+    Write-Host "Não foi possível obter o link do ODT." -ForegroundColor Red
 }
 
 # 4. Instalar Office via ODT

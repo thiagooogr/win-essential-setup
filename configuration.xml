@@ -8,6 +8,7 @@
       <ExcludeApp ID="Outlook" />
       <ExcludeApp ID="Publisher" />
       <ExcludeApp ID="Teams" />
+      <ExcludeApp ID="Access" />
     </Product>
   </Add>
   <Display Level="Full" AcceptEULA="TRUE" />
