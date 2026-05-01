@@ -1,4 +1,4 @@
-# Win Essential Setup 🚀
+# Win 11 Essential Setup 🚀
 
 ![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue)
 ![Platform](https://img.shields.io/badge/Platform-Windows-0078D6)
@@ -11,7 +11,7 @@ Automação de instalação de softwares essenciais e Microsoft Office em ambien
 
 ## 📌 Sobre o Projeto
 
-Este projeto automatiza o provisionamento inicial de máquinas Windows utilizando **PowerShell**, **Winget** (Windows Package Manager) e a **Office Deployment Tool (ODT)**.
+Este projeto automatiza o provisionamento inicial de máquinas com Windows 11 utilizando **PowerShell**, **Winget** (Windows Package Manager) e a **Office Deployment Tool (ODT)**.
 
 Com apenas um comando, o script instala aplicativos essenciais e o Microsoft Office de forma silenciosa, rápida e padronizada — ideal para formatações, setups novos ou ambientes corporativos.
 
@@ -40,7 +40,7 @@ Com apenas um comando, o script instala aplicativos essenciais e o Microsoft Off
 
 ## ⚙️ Requisitos
 
-* Windows 10 ou Windows 11
+* Windows 11
 * Winget instalado
 * PowerShell 5.1 ou superior
 * Execução como Administrador
